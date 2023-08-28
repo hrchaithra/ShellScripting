@@ -21,11 +21,11 @@ aws_region="us-east-1"
 bucket_name="mynew-shellscript-bucket"
 lambda_func_name="s3-lamdba-func"
 role_name="s3-lambda-sns"
-email_addr="wanagor534@cwtaa.com"
+email_addr="tacapi2054@trazeco.com"
 
 # Create an IAM role
 role=$(aws iam create-role --role-name s3-lambda-sns --assume-role-policy-document
-{
+'{
             "Version": "2012-10-17",
             "Statement": 
             [
@@ -41,10 +41,10 @@ role=$(aws iam create-role --role-name s3-lambda-sns --assume-role-policy-docume
                     }
                 }
             ]
-})
+}')
 
 # Extract role arn from the json response and store it in variable
-role_arn = $(echo "$role" | jq -r '.Role.Arn')
+role_arn=$(echo "$role" | jq -r '.Role.Arn')
 
 # Display Role ARN
 echo "Role ARN : $role_arn"
@@ -75,7 +75,7 @@ aws lambda create-function \
 --runtime "python3.8" \
 --memory-size 128 \
 --timeout 30 \
---role arn:aws:iam::$aws_account_id:role/$role_name
+--role "arn:aws:iam::$aws_account_id:role/$role_name" \
 --zip-file "fileb://./s3-lambda-function.zip"
 
 # Add permission to s3 to invoke lambda func
