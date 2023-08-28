@@ -59,7 +59,7 @@ echo "Bucket $bucket created successfully"
 aws s3 cp ./examplefile.txt s3://"$bucket_name"/examplefile.txt
 
 # Creating zip file to upload lambda func
-zip -r s3-lambda-function.zip ./s3-lamdba-function
+zip -r s3-lambda-function.zip ./s3-lambda-function
 
 sleep 5
 
