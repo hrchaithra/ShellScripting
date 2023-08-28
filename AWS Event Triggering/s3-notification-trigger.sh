@@ -68,7 +68,7 @@ aws lambda create-function \
   --region "$aws_region" \
   --function-name "$lamdba_func_name" \
   --runtime "python3.8" \
-  --handler "s3-lambda-function/s3-lambda-function.lambda_handler" \
+  --handler "s3-lambda-function/s3-lamdba-function.lambda_handler" \
   --memory-size 128 \
   --timeout 30 \
   --role "arn:aws:iam::$aws_account_id:role/$role_name" \
