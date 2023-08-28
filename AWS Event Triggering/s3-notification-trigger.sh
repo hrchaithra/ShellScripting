@@ -24,12 +24,9 @@ role_name="s3-lambda-sns"
 email_addr="tacapi2054@trazeco.com"
 
 # Create an IAM role
-role=$(aws iam create-role --role-name s3-lambda-sns --assume-role-policy-document
-'{
+role=$(aws iam create-role --role-name s3-lambda-sns --assume-role-policy-document '{
             "Version": "2012-10-17",
-            "Statement": 
-            [
-                {
+            "Statement": [{
                     "Action": "sts:AssumeRole",
                     "Effect": "Allow",
                     "Principal": {
@@ -39,8 +36,7 @@ role=$(aws iam create-role --role-name s3-lambda-sns --assume-role-policy-docume
                          "sns.amazonaws.com"                       
                         ]
                     }
-                }
-            ]
+                }]
 }')
 
 # Extract role arn from the json response and store it in variable
@@ -60,7 +56,7 @@ bucket=$(aws s3api create-bucket --bucket "$bucket_name" --region "aws_region")
 echo "Bucket $bucket created successfully"
 
 # Upload file to bucket
-aws s3 cp ./examplefile.txt s3://"$bucket_name"/example_file.txt
+aws s3 cp ./examplefile.txt s3://"$bucket_name"/examplefile.txt
 
 # Creating zip file to upload lambda func
 zip -r s3-lambda-function.zip ./s3-lamdba-function
