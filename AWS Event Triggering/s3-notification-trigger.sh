@@ -66,7 +66,7 @@ sleep 5
 # Create lambda function
 aws lambda create-function \
   --region "$aws_region" \
-  --function-name "$lamdba_func_name" \
+  --function-name "$lambda_func_name" \
   --runtime "python3.8" \
   --handler "s3-lambda-function/s3-lamdba-function.lambda_handler" \
   --memory-size 128 \
