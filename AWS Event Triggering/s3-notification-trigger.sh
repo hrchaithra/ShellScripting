@@ -25,19 +25,19 @@ email_addr="tacapi2054@trazeco.com"
 
 # Create an IAM role
 role=$(aws iam create-role --role-name s3-lambda-sns --assume-role-policy-document '{
-            "Version": "2012-10-17",
-            "Statement": [{
-                    "Action": "sts:AssumeRole",
-                    "Effect": "Allow",
-                    "Principal": {
-                      "Service": [
-                         "lambda.amazonaws.com"
-                         "s3.amazonaws.com"
-                         "sns.amazonaws.com"                       
-                        ]
-                    }
-                }]
-}')
+    "Version": "2012-10-17",
+    "Statement": [{
+    "Action": "sts:AssumeRole",
+    "Effect": "Allow",
+    "Principal": {
+    "Service": [
+    "lambda.amazonaws.com"
+    "s3.amazonaws.com"
+    "sns.amazonaws.com"                       
+    ]
+   }
+  }]
+ }')
 
 # Extract role arn from the json response and store it in variable
 role_arn=$(echo "$role" | jq -r '.Role.Arn')
@@ -67,8 +67,8 @@ sleep 5
 aws lambda create-function \
 --region "$aws_region" \
 --function-name $lamdba_func_name \
---handler "s3-lambda-function/s3-lambda-function.lambda_handler" \
 --runtime "python3.8" \
+--handler "s3-lambda-function/s3-lambda-function.lambda_handler" \
 --memory-size 128 \
 --timeout 30 \
 --role "arn:aws:iam::$aws_account_id:role/$role_name" \
@@ -76,9 +76,9 @@ aws lambda create-function \
 
 # Add permission to s3 to invoke lambda func
 aws lambda add-permission \
---function-name $lambda_func_name \
---action lambda:InvokeFunction \
---statement-id s3-lambda-sns \
+--function-name "$lambda_func_name" \
+--statement-id "s3-lambda-sns" \
+--action "lambda:InvokeFunction" \
 --principal s3.amazonaws.com \
 --source-arn "arn:aws:s3:::$bucket_name"
 
@@ -87,16 +87,14 @@ aws s3api put-bucket-notification-configuration \
 --region "$aws_region" \
 --bucket "$bucket_name" \
 --notification-configuration '{
-    "LambdaFunctionConfigurations": [
-      {
+    "LambdaFunctionConfigurations": [{
         "LambdaFunctionArn": "arn:aws:lambda:"$aws_region":$aws_account_id:function:$lambda_func_name",
         "Events": ["s3:ObjectCreated:*"]
-      }
-      ]
+      }]
   }'
 
 # Create an SNS topic
-topic_arn = $(aws sns create-topic --name s3-lambda-sns --output json | jq -r ".TopicArn")
+topic_arn = $(aws sns create-topic --name s3-lambda-sns --output json | jq -r '.TopicArn')
 
 # Print the TopicArn
 echo "SNS Topic ARN $topic_arn"
