@@ -50,7 +50,7 @@ aws iam attach-role-policy --role-name $role_name --policy-arn arn:aws:iam::aws:
 aws iam attach-role-policy --role-name $role_name --policy-arn arn:aws:iam::aws:policy/AmazonSNSFullAccess
 
 # Creating S3 bucket and assigning it to a variable
-bucket=$(aws s3api create-bucket --bucket "$bucket_name" --region "aws_region")
+bucket=$(aws s3api create-bucket --bucket "$bucket_name" --region "$aws_region")
 
 # Display the bucket created info
 echo "Bucket $bucket created successfully"
@@ -65,46 +65,46 @@ sleep 5
 
 # Create lambda function
 aws lambda create-function \
---region "$aws_region" \
---function-name $lamdba_func_name \
---runtime "python3.8" \
---handler "s3-lambda-function/s3-lambda-function.lambda_handler" \
---memory-size 128 \
---timeout 30 \
---role "arn:aws:iam::$aws_account_id:role/$role_name" \
---zip-file "fileb://./s3-lambda-function.zip"
+  --region "$aws_region" \
+  --function-name $lamdba_func_name \
+  --runtime "python3.8" \
+  --handler "s3-lambda-function/s3-lambda-function.lambda_handler" \
+  --memory-size 128 \
+  --timeout 30 \
+  --role "arn:aws:iam::$aws_account_id:role/$role_name" \
+  --zip-file "fileb://./s3-lambda-function.zip"
 
 # Add permission to s3 to invoke lambda func
 aws lambda add-permission \
---function-name "$lambda_func_name" \
---statement-id "s3-lambda-sns" \
---action "lambda:InvokeFunction" \
---principal s3.amazonaws.com \
---source-arn "arn:aws:s3:::$bucket_name"
+  --function-name "$lambda_func_name" \
+  --statement-id "s3-lambda-sns" \
+  --action "lambda:InvokeFunction" \
+  --principal s3.amazonaws.com \
+  --source-arn "arn:aws:s3:::$bucket_name"
 
 # Create event trigger for lambda
 aws s3api put-bucket-notification-configuration \
---region "$aws_region" \
---bucket "$bucket_name" \
---notification-configuration '{
-    "LambdaFunctionConfigurations": [{
+  --region "$aws_region" \
+  --bucket "$bucket_name" \
+  --notification-configuration '{
+      "LambdaFunctionConfigurations": [{
         "LambdaFunctionArn": "arn:aws:lambda:"$aws_region":$aws_account_id:function:$lambda_func_name",
         "Events": ["s3:ObjectCreated:*"]
       }]
   }'
 
 # Create an SNS topic
-topic_arn = $(aws sns create-topic --name s3-lambda-sns --output json | jq -r '.TopicArn')
+topic_arn=$(aws sns create-topic --name s3-lambda-sns --output json | jq -r '.TopicArn')
 
 # Print the TopicArn
 echo "SNS Topic ARN $topic_arn"
 
 # Add SNS permission to Lambda
 aws sns subscribe \
---region us-east-1 \
---topic-arn "$topic_arn" \
---protocol email \
---notification-endpoint "$email_addr" 
+  --region us-east-1 \
+  --topic-arn "$topic_arn" \
+  --protocol email \
+  --notification-endpoint "$email_addr" 
 
 # Publish SNS
 aws sns publish \
