@@ -27,16 +27,16 @@ email_addr="tacapi2054@trazeco.com"
 role=$(aws iam create-role --role-name s3-lambda-sns --assume-role-policy-document '{
     "Version": "2012-10-17",
     "Statement": [{
-    "Action": "sts:AssumeRole",
-    "Effect": "Allow",
-    "Principal": {
-    "Service": [
-    "lambda.amazonaws.com"
-    "s3.amazonaws.com"
-    "sns.amazonaws.com"                       
-    ]
-   }
-  }]
+      "Action": "sts:AssumeRole",
+      "Effect": "Allow",
+      "Principal": {
+      "Service": [
+        "lambda.amazonaws.com"
+        "s3.amazonaws.com"
+        "sns.amazonaws.com"                       
+       ]
+      }
+    }]
  }')
 
 # Extract role arn from the json response and store it in variable
