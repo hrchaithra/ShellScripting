@@ -88,7 +88,7 @@ aws s3api put-bucket-notification-configuration \
   --bucket "$bucket_name" \
   --notification-configuration '{
       "LambdaFunctionConfigurations": [{
-        "LambdaFunctionArn": "arn:aws:lambda:"$aws_region":$aws_account_id:function:$lambda_func_name",
+        "LambdaFunctionArn": "'arn:aws:lambda:"$aws_region":"$aws_account_id":function:"$lambda_func_name"'",
         "Events": ["s3:ObjectCreated:*"]
       }]
   }'
