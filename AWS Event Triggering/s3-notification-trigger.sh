@@ -19,7 +19,7 @@ echo "AWS account Id is $aws_account_id"
 # Set AWS region and other info
 aws_region="us-east-1"
 bucket_name="mynew-shellscript-bucket"
-lambda_func_name="s3-lamdba-func"
+lambda_func_name="s3-lambda-func"
 role_name="s3-lambda-sns"
 email_addr="tacapi2054@trazeco.com"
 
